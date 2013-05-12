@@ -102,18 +102,22 @@ PARSER
 
        Service methods are used to detect terminals or end of input.
 
-       Parser methods have same names as bnf entities and used to detect correspondent pattern.
+       Parser methods have same names as bnf entities and used to detect
+       correspondent pattern.
 
-       Auxiliary methods usually called from parser methods. They exist due to construction
-       logic of parser methods code.
+       Auxiliary methods usually called from parser methods. They exist due to
+       construction logic of parser methods code.
 
-       Abstract methods are not defined in parser class. They are entities not defined in BNF++
-       syntax file. To use such entities it is needed to instantiate from parser class and define them.
+       Abstract methods are not defined in parser class. They are entities not
+       defined in BNF++ syntax file. To use such entities it is needed to instantiate
+       from parser class and define them.
 
-       Template version of parser class lets specify type of string container and type of user value.
+       Template version of parser class lets specify type of string container
+       and type of user value.
 
-       User value is transparent variable which bypassed throw any service, parser, auxiliary or
-       abstract method. Usually it is used to collect values of specified entities.
+       User value is transparent variable which bypassed throw any service, parser,
+       auxiliary or abstract method. Usually it is used to collect values of
+       specified entities.
 
             Note: When using templates remember that definitions of template
             class methods must be included with their declarations together.
@@ -121,20 +125,22 @@ PARSER
 RUNNING
        To run BNF++ just type
 
-       `bnf++ [--user-value[=type]] [--with-template] [--output=filename_wo_ext] [--debug] source'
+       `bnf++ [--user-value[=type]] [--with-template] [--output=filename_wo_ext]
+              [--debug] source'
 
        The only needed argument is BNF++ syntax source.
 
-       Result header and C++ source filenames are constructed using class name if --output argument
-       not specified. Extensions .h and .cc added to header and C++ source files accordingly.
+       Result header and C++ source filenames are constructed using class name if
+       --output argument not specified. Extensions .h and .cc added to header and
+       C++ source files accordingly.
 
        Argument --with-template turns template generation on.
 
-       Argument --user-value addes user value to all members. When not using template generation,
-       Type is a type of user value variable (default: int).
+       Argument --user-value addes user value to all members. When not using template
+       generation, Type is a type of user value variable (default: int).
 
-       The --debug argument addes debug information printing in each member of parser class
-       (entering and leaving of method and result).
+       The --debug argument addes debug information printing in each member of
+       parser class (entering and leaving of method and result).
 
 EXAMPLE
        BNF++ parser itself based on BNF++ syntax grammar. See sources
@@ -169,13 +175,13 @@ REPORTING BUGS
        Report bugs to <bnf_plusplus.bugs@virtan.com>.
 
 COPYRIGHT
-       Copyright (C) 2005 Free Software Foundation, Inc.  This is free software; see the source
-       for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR
-       A PARTICULAR PURPOSE.
+       Copyright (C) 2005 Free Software Foundation, Inc.  This is free software;
+       see the source for copying conditions. There is NO warranty; not even for
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 SEE ALSO
-       The full documentation for bnf++ is maintained as a Texinfo manual.  If the info and
-       bnf++ programs are properly installed at your site, the command
+       The full documentation for bnf++ is maintained as a Texinfo manual. If the info
+       and bnf++ programs are properly installed at your site, the command
 
               info bnf++
 
@@ -183,4 +189,4 @@ SEE ALSO
 
 
 
-bnf++ version 1.1                  July 2005                                           BNF++(1)
+bnf++ version 1.1                  July 2005                                   BNF++(1)
