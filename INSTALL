@@ -1,0 +1,6 @@
+Only three steps:
+
+1. ./configure --prefix=/usr
+2. make -j 2
+3. sudo make install
+

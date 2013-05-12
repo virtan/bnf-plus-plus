@@ -1,0 +1,89 @@
+// bnf++ syntax
+
+// short description of syntax:
+// | - or
+// ( ) - grouping
+// [ ] - option
+// { } - repetition (1 or more)
+// . - any symbol
+// ' ' - symbol
+// " " - string
+// ! - not
+// < > - ranges (like [] in regexp)
+// eoi - end of input checking rule (not moving the offset)
+
+// note 1: spaces aren not neccessary, when not ambiguous
+// note 2: escaping in symbol and string as in C
+
+
+
+classname bnf_plusplus_parser;
+
+
+grammar ::= [ { any_string ! eoi } ] ;
+
+any_string ::= ( bnf_string | not_bnf_string ) eos ;
+eos ::= '\n' | eoi ;
+ws ::= { < \t> } ;
+wsnl ::= { < \t\n\r> } ;
+comment ::= "//" [ { ! eos } ] | "/*" ! "*/" "*/" ;
+
+bnf_string ::= [ ws ] bnf_expression [ wsnl ] ';' [ ws ] [ comment ] ;
+not_bnf_string ::= [ { ! eos } ] ;
+
+bnf_expression ::= bnf_assignment | bnf_class_definition ;
+bnf_assignment ::= bnf_name [ wsnl ] "::=" [ wsnl ] bnf_body ;
+bnf_class_definition ::= "classname" wsnl bnf_class_name ;
+bnf_class_name ::= { <A-Za-z0-9_> } ;
+bnf_name ::= { <A-Za-z0-9_> } ;
+bnf_body ::= bnf_description ;
+
+bnf_description ::= bnf_sequence [ { [ wsnl ] '|' [ wsnl ] bnf_sequence } ] ;
+bnf_sequence ::= bnf_item [ { wsnl bnf_item } ] ;
+bnf_item ::= bnf_grouping | bnf_optim_option_repetition | bnf_option | bnf_repetition | bnf_not_eoi | bnf_not_istring | bnf_negation | bnf_entry | bnf_symbol | bnf_istring | bnf_range | bnf_dot ;
+
+bnf_grouping ::= '(' [ wsnl ] bnf_grouping_body [ wsnl ] ')' ;
+bnf_grouping_body ::= bnf_description ;
+
+bnf_optim_option_repetition ::= '[' [ wsnl ] '{' [ wsnl ] bnf_optim_option_repetition_body [ wsnl ] '}' [ wsnl ] ']' ;
+bnf_optim_option_repetition_body ::= bnf_description ;
+
+bnf_option ::= '[' [ wsnl ] bnf_option_body [ wsnl ] ']' ;
+bnf_option_body ::= bnf_description ;
+
+bnf_repetition ::= '{' [ wsnl ] bnf_repetition_body [ wsnl ] '}' ;
+bnf_repetition_body ::= bnf_description ;
+
+bnf_not_eoi ::= '!' [ wsnl ] "eoi" ;
+
+bnf_not_istring ::= '!' [ wsnl ] bnf_not_istring_string ;
+bnf_not_istring_string ::= '"' { bnf_istring_symbol } '"' ;
+
+bnf_negation ::= '!' [ wsnl ] bnf_negation_item ;
+bnf_negation_item ::= bnf_item ;
+
+bnf_entry ::= { <A-Za-z0-9_> } ;
+
+bnf_symbol ::= '\'' bnf_symbol_symbol '\'' ;
+bnf_symbol_symbol ::= bnf_escaped_symbol | ! '\'' ;
+
+bnf_istring ::= '"' { bnf_istring_symbol } '"' ;
+bnf_istring_symbol ::= bnf_escaped_symbol | ! '"' ;
+
+bnf_range ::= '<' { bnf_range_item } '>' ;
+bnf_range_item ::= bnf_range_symbol_range | bnf_range_symbol ;
+bnf_range_symbol_range ::= bnf_range_symbol_range_since '-' bnf_range_symbol_range_till ;
+bnf_range_symbol_range_since ::= ! '>' ;
+bnf_range_symbol_range_till ::= ! '>' ;
+bnf_range_symbol ::= bnf_escaped_symbol | ! '>' ;
+
+bnf_dot ::= '.' ;
+
+bnf_escaped_symbol ::= bnf_escaped_code | bnf_escaped_char;
+bnf_escaped_code ::= '\\' (bnf_escaped_code_oct | bnf_escaped_code_hex);
+bnf_escaped_code_oct ::= bnf_escaped_code_oct_char [bnf_escaped_code_oct_char] [bnf_escaped_code_oct_char];
+bnf_escaped_code_oct_char ::= <0-7>;
+bnf_escaped_code_hex ::= 'x' bnf_escaped_code_hex_char [bnf_escaped_code_hex_char];
+bnf_escaped_code_hex_char ::= <0-9A-Fa-f>;
+bnf_escaped_char ::= '\\' . ;
+

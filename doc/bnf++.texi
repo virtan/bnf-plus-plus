@@ -1,0 +1,277 @@
+\input texinfo
+@setfilename bnf++.info
+@settitle BNF++
+@finalout
+@setchapternewpage odd
+@firstparagraphindent none
+@paragraphindent none
+
+@include version.texi
+
+@ifinfo
+This file documents BNF++ 1.0
+
+Copyright 2005 virtan
+@end ifinfo
+
+@titlepage
+@title BNF++
+@subtitle Edition @value{EDITION}, for BNF++ version @value{VERSION}
+@subtitle @value{UPDATED}
+@author virtan
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2005 virtan
+@end titlepage
+
+@node Top, , , (dir)
+
+@ifinfo
+(c) 2005 virtan
+
+This file documents BNF++ - a C++ language parser generator for BNF syntax.
+@end ifinfo
+
+@menu
+* Copying::             Copying of IP Splitter.
+* Overview::            Preliminary information.
+* BNF syntax::          Syntax of input BNF.
+* Parser::              Generated parser structure.
+* Running::             Running BNF++.
+* Example::             Example.
+* To Do::               Plans for future.
+* Concepts::            Index of concepts.
+@end menu
+
+@node Copying, Overview, , Top
+@chapter Copying of BNF++
+@cindex copy
+@cindex copying
+@cindex copyright
+@include gpl.texi
+
+@node Overview, BNF syntax, Copying, Top
+@chapter Overview
+@cindex overview
+@cindex about
+
+
+BNF++ is a parser generator. It accepts BNF syntax grammar at input
+and generates parser class written in C++.
+
+BNF++ useful to generate parsers from RFC definitions of syntax. RFC uses
+Augmented Backus-Naur Form (ABNF) notation specified in
+@url{ftp://ftp.rfc-editor.org/in-notes/rfc2234.txt,RFC2234}. With small
+changes, this notation can be rewritten in syntax acceptable by BNF++.
+@xref{BNF syntax,,,,}, for details.
+
+Any BNF++ entity becomes a virtual method of parser class. It can be
+overloaded in derived classes. Overloading of base methods (char
+comparison, substring search, eoi detection or etc) also supported.
+It is possible to use user defined methods in any part of syntax
+definition (they declared as abstract in parser). @xref{Parser,,,,}, for
+details.
+
+BNF++ parsers use STL string container as input (planned to add STL stream
+input possibility).
+
+@node BNF syntax, Parser, Overview, Top
+@chapter BNF syntax
+@cindex bnf
+@cindex bnf++
+@cindex syntax
+@cindex input
+@cindex source
+
+BNF++ uses the following syntax of input BNF.
+
+Whole document consist of four parts: "above lines", class definition, bnf grammar and "below lines".
+
+"Above lines" and "below lines" are strings of free text
+which are directly passed to result header file (at head and tail
+accordingly).
+
+The class definition is a string of syntax:
+
+@cindex classname
+@example
+class name_of_class ;
+@end example
+
+BNF grammar part contains any number of assignment rules. All of them has
+syntax:
+
+@cindex entity
+@example
+<entity> ::= <entity_body> ;
+@end example
+
+The entity in syntax above is a name of grammar entity (became a function member
+in parser class). Each entity defines possible structure of input which can be parsed.
+The entity_body is a sequence of expressions. Entity_body is an
+expression itself.
+
+Expressions use the following logic:
+
+@cindex expression logic
+@multitable @columnfractions .15 .35 .5
+@item sequence 
+@tab <expr1> <expr2> <expr3> ... 
+@tab expression consist of specified expressions in specified order
+@item alternative
+@tab <expr1> | <expr2> | <expr3> | ...
+@tab expression consist of any (checked in order of given) of expressions
+@item grouping
+@tab ( <expression>  )
+@tab grouping of expressions (useful with alternatives, repetition, option, etc)
+@item option
+@tab [ <expression> ]
+@tab optionality of expression
+@item repetition
+@tab @{ <expression> @}
+@tab repetition of expression (1 or more times of repeat)
+@end multitable
+
+Expression can be or include terminals. Possible terminals:
+
+@cindex terminals
+@multitable @columnfractions .15 .85
+@item .
+@tab any symbol
+@item 'c'
+@tab specified symbol
+@item "abc"
+@tab string of symbols
+@item !
+@tab "not" - inversing of following expression item
+@item <a-z0-9_->
+@tab range of acceptable symbols (like [] in regexp)
+@item eoi
+@tab end of input status (has zero length)
+@end multitable
+
+@cindex spaces
+@cindex escaping
+Spaces are not neccessary, when not ambiguous. Escaping in symbols and
+strings as in C. Ranges acceps backslash-octal-value escaping.
+
+@node Parser, Running, BNF syntax, Top
+@chapter Parser
+@cindex parser
+@cindex class
+@cindex c++
+
+Generated parser is a C++ class (or template of classes).
+
+@cindex constructor
+Constructor accepts constant reference to string and start/end position.
+
+Class contains service, parser, auxiliary and abstract methods.
+
+@cindex service methods
+Service methods are used to detect terminals or end of input.
+
+@cindex parser methods
+Parser methods have same names as bnf entities and used to
+detect correspondent pattern.
+
+@cindex auxiliary methods
+Auxiliary methods usually called from parser methods. They exist
+due to construction logic of parser methods code.
+
+@cindex abstract methods
+Abstract methods are not defined in parser class. They are
+entities not defined in BNF++ syntax file. To use such entities
+it is needed to instantiate from parser class and define them.
+
+@cindex template
+Template version of parser class lets specify type of string
+container and type of user value.
+
+@cindex user value
+User value is transparent variable which bypassed throw
+any service, parser, auxiliary or abstract method. Usually it
+is used to collect values of specified entities.
+
+@cindex using template
+@quotation Note
+When using templates remember that definitions of template
+class methods must be included with their declarations together.
+@end quotation
+
+@node Running, Example, Parser, Top
+@chapter Running
+@cindex running
+@cindex use
+@cindex arguments
+
+To run BNF++ just type
+
+  @command{bnf++ [--user-value[=type]] [--with-template]
+ [--output=filename_wo_ext] [--debug] source}
+
+The only needed argument is BNF++ syntax source.
+
+Result header and C++ source filenames are constructed using class name
+if ---output argument not specified. Extensions .h 
+and .cc added to header and C++ source files accordingly.
+
+Argument ---with-template turns template generation on.
+
+Argument ---user-value addes user value to all members. When not using
+template generation, Type is a type of user value variable (default: int).
+
+@cindex debug
+The ---debug argument addes debug information printing in each member of parser
+class (entering and leaving of method and result).
+
+
+@node Example, To Do, Running, Top
+@chapter Example
+@cindex example
+@cindex test
+
+BNF++ parser itself based on BNF++ syntax grammar. See 
+@url{http://www.virtan.com/projects/bnf++/?chapter=Download,sources}.
+
+@cindex bnf++.bnf++
+There are:
+
+@table @samp
+@item bnf++.bnf++
+BNF++ grammar. Defines bnf_plusplus_parser class.
+@item bnf++parser.h, bnf++parser.cc
+Generated parser. The bnf_plusplus_parser class itself.
+@item bnf++gen.h, bnf++gen.cc
+Derived class. Inherits bnf_plusplus_parser class.
+@end table
+
+@node To Do, Concepts, Example, Top
+@chapter To Do
+@cindex plan
+@cindex future
+@cindex to do
+@cindex todo
+
+Plans for future:
+
+@cindex bit-field table
+@cindex optimization
+@cindex stream input
+@enumerate
+@item Change realization of range checking to bit-field tables.
+@item Add checking (and removing) of duplicate auxiliary functions.
+@item Research of enhance compilation optimization.
+@item Stream input support.
+@end enumerate
+
+@node Concepts, , To Do, Top
+@unnumbered Concept Index
+
+@printindex cp
+
+@shortcontents
+@contents
+@bye
+
