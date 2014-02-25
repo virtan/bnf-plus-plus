@@ -10,6 +10,7 @@ string user_value_type;
 bool debug=false;
 bool user_value=false;
 bool with_template=false;
+string templates_dir=TEMPLATES_DIR;
 
 string version()
 {
@@ -57,6 +58,10 @@ bool args(int argc, char **argv, string &filename)
             with_template=true;
             continue;
         }
+        if(!strncmp(argv[i]+2,"templates-dir",13)) {
+            templates_dir=argv[i]+2+13+1;
+            continue;
+        }
         if(!strcmp(argv[i]+2,"debug")) {
             debug=true;
             continue;
@@ -101,7 +106,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    string templ_file=TEMPLATES_DIR;
+    string templ_file=templates_dir;
     templ_file+="/";
     templ_file+=(with_template?"template":"base");
     templ_file+=(user_value?"_uv":"");

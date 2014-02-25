@@ -28,7 +28,7 @@ DESCRIPTION
 
    Usage:
               bnf++ [--user-value[=type]] [--with-template] [--output=filename_wo_ext]
-                    [--debug] source
+                    [--templates-dir=dir] [--debug] source
 
 OPTIONS
        --user-value[=type] add definition of additional argument for user

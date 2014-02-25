@@ -99,7 +99,7 @@ values of specified entities.
 [RUNNING]
 To run BNF++ just type
 
-`bnf++ [--user-value[=type]] [--with-template] [--output=filename_wo_ext] [--debug] source'
+`bnf++ [--user-value[=type]] [--with-template] [--output=filename_wo_ext] [--templates-dir=dir] [--debug] source'
 
 The only needed argument is BNF++ syntax source.
 
