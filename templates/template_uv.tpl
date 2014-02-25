@@ -55,6 +55,7 @@ class %c
 %a
 #endif
 -----header-body-delimiter-----
+#include <string.h>
 #include <%c.h>
 %d#include <iostream>
 
