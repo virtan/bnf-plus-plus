@@ -12,7 +12,7 @@
 // < > - ranges (like [] in regexp)
 // eoi - end of input checking rule (not moving the offset)
 
-// note 1: spaces aren not neccessary, when not ambiguous
+// note 1: spaces are not neccessary, when not ambiguous
 // note 2: escaping in symbol and string as in C
 
 
